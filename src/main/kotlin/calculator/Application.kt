@@ -1,4 +1,5 @@
 package calculator
+
 import camp.nextstep.edu.missionutils.Console.readLine
 
 fun main() {
@@ -14,28 +15,32 @@ fun readInput(): String {
 }
 
 fun extractNumbers(input: String): List<Int> {
-    if(input.isBlank()) return emptyList()
+    if (input.isBlank()) return emptyList()
 
     val (delimiter, body) = customDelimiter(input)
     val tokens = body.split(delimiter).map { it.trim() }
 
-    if(tokens.any {Regex("-\\d+").containsMatchIn(it)}) {
+    if (tokens.any { Regex("-\\d+").containsMatchIn(it) }) {
         throw IllegalArgumentException("잘못된 입력: 음수")
     }
 
     return tokens.mapNotNull { token ->
-        val digits = token.filter (Char::isDigit)
-        digits.takeIf {it.isNotEmpty()}?.toInt()
+        val digits = token.filter(Char::isDigit)
+        digits.takeIf { it.isNotEmpty() }?.toInt()
     }
 }
 
 fun customDelimiter(input: String): Pair<Regex, String> {
     if (!input.startsWith("//")) return Regex("[,:]") to input
+
     val lineChangeIndex = input.indexOf("\n")
-    if(lineChangeIndex < 2){
+
+    if (lineChangeIndex < 2) {
         return Regex("[,:]") to input
     }
+
     val custom = input.substring(2, lineChangeIndex)
     val body = input.substring(lineChangeIndex + 1)
+
     return Regex("[,:$custom]") to body
 }

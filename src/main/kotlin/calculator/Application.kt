@@ -18,7 +18,11 @@ fun extractNumbers(input: String): List<Int> {
 
     val (delimiter, body) = customDelimiter(input)
     val tokens = body.split(delimiter).map { it.trim() }
-    
+
+    if(tokens.any {Regex("-\\d+").containsMatchIn(it)}) {
+        throw IllegalArgumentException("잘못된 입력: 음수")
+    }
+
     return tokens.mapNotNull { token ->
         val digits = token.filter (Char::isDigit)
         digits.takeIf {it.isNotEmpty()}?.toInt()

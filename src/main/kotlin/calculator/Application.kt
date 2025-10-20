@@ -15,11 +15,23 @@ fun readInput(): String {
 
 fun extractNumbers(input: String): List<Int> {
     if(input.isBlank()) return emptyList()
-    
-    val tokens = input.split(Regex("[,:]")).map { it.trim() }
+
+    val (delimiter, body) = customDelimiter(input)
+    val tokens = body.split(delimiter).map { it.trim() }
     
     return tokens.mapNotNull { token ->
         val digits = token.filter (Char::isDigit)
         digits.takeIf {it.isNotEmpty()}?.toInt()
     }
+}
+
+fun customDelimiter(input: String): Pair<Regex, String> {
+    if (!input.startsWith("//")) return Regex("[,:]") to input
+    val lineChangeIndex = input.indexOf("\n")
+    if(lineChangeIndex < 2){
+        return Regex("[,:]") to input
+    }
+    val custom = input.substring(2, lineChangeIndex)
+    val body = input.substring(lineChangeIndex + 1)
+    return Regex("[,:$custom]") to body
 }
